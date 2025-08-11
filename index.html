@@ -1,55 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Simple Web Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-            text-align: center;
-        }
-        header {
-            background-color: #0077cc;
-            color: white;
-            padding: 20px 0;
-        }
-        main {
-            padding: 20px;
-        }
-        footer {
-            background-color: #222;
-            color: #aaa;
-            padding: 10px 0;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-        a {
-            color: #0077cc;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Code Check</title>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Simple Web Page</h1>
-    </header>
+  <h2>Enter Code</h2>
+  <input type="text" id="userCode" placeholder="Enter code">
+  <button onclick="checkCode()">Check</button>
 
-    <main>
-        <p>Hello! This is a basic HTML index page with some styling.</p>
-        <p>Feel free to <a href="#">click here</a> for more info.</p>
-    </main>
+  <p id="result"></p>
 
-    <footer>
-        &copy; 2025 My Website
-    </footer>
+  <script>
+    const SHEET_ID = "1H21KTBTN2AO6ht9q9ACMUzSWUsxcbEQWr9YDPIERyxM"; 
+    const SHEET_NAME = "Sheet1"; // Change if needed
+    const API_KEY = "AIzaSyBP4Bi8dlrNXj7vEcgWuDyVrzomrFgZCNk"; 
+    const SUCCESS_PAGE = "home.html"; // Your second GitHub Pages URL
+
+    async function checkCode() {
+      const input = document.getElementById("userCode").value.trim();
+      const resultEl = document.getElementById("result");
+
+      if (!input) {
+        resultEl.textContent = "Please enter a code.";
+        return;
+      }
+
+      try {
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${SHEET_NAME}?key=${API_KEY}`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const rows = data.values;
+        let found = false;
+
+        for (let i = 1; i < rows.length; i++) {
+          if (rows[i][0] === input) { // Match first column
+            found = true;
+            break;
+          }
+        }
+
+        if (found) {
+          resultEl.textContent = "Yes";
+          window.location.href = SUCCESS_PAGE; // Redirect
+        } else {
+          resultEl.textContent = "No";
+        }
+
+      } catch (err) {
+        console.error(err);
+        resultEl.textContent = "Error fetching data.";
+      }
+    }
+  </script>
 </body>
 </html>
