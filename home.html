@@ -1,9 +1,34 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    #logout { margin-top: 20px; padding: 10px 20px; }
+  </style>
+</head>
 <body>
+  <h2>Dashboard</h2>
+  <p id="welcome"></p>
+  <button id="logout">Logout</button>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+  <script>
+    const userData = localStorage.getItem("googleUser");
 
+    if (!userData) {
+      // No session → redirect to login
+      window.location.href = "index.html";
+    } else {
+      const user = JSON.parse(userData);
+      document.getElementById("welcome").textContent =
+        `Welcome, ${user.name} (${user.email})`;
+    }
+
+    document.getElementById("logout").onclick = () => {
+      localStorage.removeItem("googleUser");
+      window.location.href = "index.html";
+    };
+  </script>
 </body>
 </html>
