@@ -1,29 +1,41 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login with Google</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+  </style>
+</head>
 <body>
-  <input type="text" id="codeInput" placeholder="Enter code">
-  <button onclick="checkCode()">Check</button>
-  <p id="result"></p>
-<button onclick="bhejo()">second page</button>
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyzValAZOXpsfxqfiJVrDwPX9R2LqOaWxQiwCj1mLu_p34C63gdyW-0sC_Iv5Ma3zBh/exec"; // From Apps Script deploy
+  <h2>Welcome — Please Login</h2>
 
-async function checkCode() {
-  const code = document.getElementById("codeInput").value.trim();
-  const res = await fetch(`${SCRIPT_URL}?code=${encodeURIComponent(code)}`);
-  const text = await res.text();
-  
-  if (text === "YES") {
-    document.getElementById("result").textContent = "Match found!";
-    window.location.href = "home.html"; // Redirect
-  } else {
-    document.getElementById("result").textContent = "No match.";
-  }
-}
-function bhejo(){
-window.location.href = "home.html";
-}
+  <!-- Google Sign-In Button -->
+  <div id="g_id_signin"></div>
 
-</script>
+  <script>
+    function handleCredentialResponse(response) {
+      const data = JSON.parse(atob(response.credential.split('.')[1]));
+      console.log("Logged in as:", data);
+
+      // Save session info
+      localStorage.setItem("googleUser", JSON.stringify(data));
+
+      // Redirect to dashboard
+      window.location.href = "dashboard.html";
+    }
+
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: "743519825011-tqdme5h8bqs4tbthaqqvms4e34cdbisa.apps.googleusercontent.com",
+        callback: handleCredentialResponse
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("g_id_signin"),
+        { theme: "outline", size: "large" }
+      );
+    };
+  </script>
 </body>
 </html>
